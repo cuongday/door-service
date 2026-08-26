@@ -165,9 +165,9 @@ If no connected scoped DOOR service exists, VMS logs a warning and still sends K
 
 ## VMS Backend Design
 
-### Door sync component
+### Door sync method
 
-Create a focused `DoorSyncService` responsible for transport fan-out. It owns:
+Implement transport fan-out directly in `DoorService.syncDoor`. `DoorService` receives these additional dependencies:
 
 - `ServiceService`
 - `RabbitMQService`
@@ -176,7 +176,7 @@ Create a focused `DoorSyncService` responsible for transport fan-out. It owns:
 - `MapperService`
 - `AppProperties`
 
-`DoorService.syncDoor(Door door, String event)` converts the entity to `DoorDTO` and delegates to `DoorSyncService`. Keeping transport dependencies in a dedicated component avoids expanding the already broad `DoorService` constructor.
+`DoorService.syncDoor(Door door, String event)` converts the entity to `DoorDTO` and performs RabbitMQ, Kafka, and websocket delivery itself. An overload accepting `DoorDTO` may be used by delete so the snapshot remains available after entity removal.
 
 Each transport is isolated in its own `try/catch`. Synchronization is best-effort, matching Camera behavior: a downstream failure is logged and does not roll back a successful database mutation.
 
@@ -233,7 +233,7 @@ Add an idempotent `DoorStore.Delete(id string) bool` method. It removes the door
 - Rename changes only `name` even when the payload contains other fields.
 - Old PUT/PATCH `/api/door` routes are absent; PATCH `/api/door/rename` is present.
 - Delete emits a full `DoorDTO` with `DOOR_DELETE` before repository deletion.
-- `DoorSyncService` routes by effective AI-Box scope.
+- `DoorService.syncDoor` routes by effective AI-Box scope.
 - RabbitMQ destination is `DOOR_<serviceId>_door`.
 - Kafka uses `doorTopicName` and a `CRUDMessage`.
 - Websocket event names match the contract.
@@ -258,4 +258,3 @@ Update the FE integration Markdown, DOCX, Postman collection, and Postman README
 - State that only `id` and `name` are used.
 - Document websocket event names.
 - Document that create/add/rename/delete are synchronized asynchronously.
-
