@@ -205,7 +205,7 @@ Create and start a fourth RabbitMQ consumer with manual acknowledgement, alongsi
 
 Add `DoorSyncRabbitMQHandler` with these behaviors:
 
-- `DOOR_CREATE`: deserialize `DoorDTO` and upsert the full door into `DoorStore`.
+- `DOOR_CREATE`: merge the VMS snapshot into an existing stored door so ONVIF endpoint/token and protocol metadata absent from Java `DoorDTO` are preserved; if the door does not exist, upsert the received snapshot.
 - `DOOR_UPDATE`: if the door exists, preserve all stored fields and replace only `Name`; if it does not exist, upsert the received full snapshot to self-heal after a missed create/bootstrap.
 - `DOOR_DELETE`: remove the door by ID. Deleting a missing door is idempotent and succeeds.
 - Any other event: reject as an invalid request.
@@ -242,7 +242,7 @@ Add an idempotent `DoorStore.Delete(id string) bool` method. It removes the door
 ### door-service
 
 - Queue construction includes `<prefix>_door`.
-- Create upserts a door.
+- Create merges VMS fields while preserving existing ONVIF/protocol metadata, or upserts when missing.
 - Update changes only the stored name.
 - Update of a missing door self-heals by upserting the snapshot.
 - Delete removes the door and its indexes.
