@@ -182,9 +182,9 @@ Each transport is isolated in its own `try/catch`. Synchronization is best-effor
 
 ### CRUD integration points
 
-- Override `DoorService.create(DoorDTO)` to call `super.create`, then `syncDoor(..., DOOR_CREATE)`.
+- Add `DoorService.createDoor(DoorDTO): DoorDTO` to create, map, synchronize, and return the DTO; `DoorController` forwards this DTO without mapping.
 - In `addDiscoveredDoor`, call `syncDoor(..., DOOR_CREATE)` after each door becomes `added=true` and is saved.
-- Add `DoorService.rename(DoorRenameDTO)` which loads the entity, changes only `name`, saves, and calls `syncDoor(..., DOOR_UPDATE)`.
+- Add `DoorService.rename(DoorRenameDTO): DoorDTO` which loads the entity, changes only `name`, saves, maps once, synchronizes that DTO, and returns it; `DoorController` forwards the DTO without mapping.
 - In `delete`, capture DTO snapshots, emit `DOOR_DELETE`, then call `repo.deleteAll`.
 
 The existing `DoorService.findAll` behavior remains restricted to `added=true`, so delete continues to operate only on added doors.
