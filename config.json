@@ -1,0 +1,7 @@
+{
+  "isBox": false,
+  "apiHost": "192.168.1.91",
+  "apiPort": 58080,
+  "apiSecure": false,
+  "bootstrapSecret": "TESTM2MBOOTSTRAPSECRET"
+}

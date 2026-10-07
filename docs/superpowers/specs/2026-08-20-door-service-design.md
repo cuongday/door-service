@@ -8,55 +8,57 @@ The first implementation phase builds `door-service` and the VMS bootstrap snaps
 
 ## Project Shape
 
-The repository follows `onvifservice` conventions instead of a `cmd/internal` layout:
+The service keeps the lifecycle and package boundaries of `onvifservice`, but all Go module code lives under one `src/` directory instead of at repository root or in a `cmd/internal` layout:
 
 ```text
 door-service/
-  api/
-    api.go
-  config/
-    base_config.go
-    box_config.go
-    server_config.go
-    config_loader.go
-  db/
-    service_model.go
-    service_repo.go
-  dto/
-    access_controller_dto.go
-    door_dto.go
-    discovery_info_dto.go
-    command_dto.go
-  manager/
-    manager.go
-    onvifmanager/
-    hikvisionmanager/
-    discoverymanager/
-  store/
-    controller_store.go
-    door_store.go
-    job_store.go
-  rbmqhandler/
-    rbmq_message.go
-    event_type.go
-    discovery_rbmq_handler.go
-    access_controller_rbmq_handler.go
-    command_rbmq_handler.go
-  version/
-    version.go
-  websocket/
-    client.go
+  src/
+    api/
+      api.go
+    config/
+      base_config.go
+      box_config.go
+      server_config.go
+      config_loader.go
+    db/
+      service_model.go
+      service_repo.go
+    dto/
+      access_controller_dto.go
+      door_dto.go
+      discovery_door_info_dto.go
+      command_dto.go
+    manager/
+      manager.go
+      onvifmanager/
+      hikvisionmanager/
+      discoverymanager/
+    store/
+      controller_store.go
+      door_store.go
+      client_store.go
+      job_store.go
+    rbmqhandler/
+      rbmq_message.go
+      event_type.go
+      discovery_rbmq_handler.go
+      access_controller_rbmq_handler.go
+      command_rbmq_handler.go
+    version/
+      version.go
+    websocket/
+      client.go
+    main.go
+    go.mod
   commonkit/
-  main.go
   config.json
-  go.mod
   Dockerfile
   docker-compose.yml
   .gitlab-ci.yml
   .gitmodules
 ```
 
-`commonkit` is a Git submodule, referenced from `go.mod` with `replace commonkit => ./commonkit`. The submodule URL must use the repository-relative GitLab form and must not contain embedded credentials. The service reuses commonkit RabbitMQ, logging, JSON, HTTP, network, SQLite, websocket, scheduling, and system-monitor packages.
+`commonkit` is a root-level Git submodule, referenced from `src/go.mod` with `replace commonkit => ../commonkit`. The submodule URL must use the repository-relative GitLab form and must not contain embedded credentials. The service reuses commonkit RabbitMQ, logging, JSON, HTTP, network, SQLite, websocket, scheduling, and system-monitor packages.
 
 Docker, multi-architecture CI, build metadata stamping, timezone configuration, and compose conventions mirror `onvifservice`, with names changed to `door-service`.
 
@@ -155,7 +157,7 @@ Messages retain the existing `RBMQMessage` envelope: `id`, `event`, `data`, `dst
 
 Queue: `DOOR_<service-id>_discovery`
 
-- `discovery_door`: starts ONVIF door discovery using the existing `DiscoveryInfoDTO` payload.
+- `discovery_door`: starts ONVIF door discovery using the door-specific `DiscoveryDoorInfoDTO` payload. It contains only `usernames`, `passwords`, `fromIp`, `toIp`, `ports`, and `onvifPort`; camera-only fields are not part of this contract.
 - `discovery_door_stop`: cancels the job identified by the message ID.
 
 Each result retains `event=discovery_door`. Completion retains the current compatibility value `data="Done"`.

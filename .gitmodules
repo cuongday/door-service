@@ -1,0 +1,3 @@
+[submodule "commonkit"]
+	path = commonkit
+	url = https://gitlab.ai-vlab.com/gpstech/vms/golang/commonkit.git

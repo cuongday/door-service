@@ -1,0 +1,54 @@
+{
+  "id": "service-1",
+  "type": "DOOR",
+  "accessControllers": [
+    {
+      "id": "controller-hikvision",
+      "type": "HIKVISION",
+      "name": "Front lobby controller",
+      "ipAddress": "192.168.1.10",
+      "port": 443,
+      "username": "fixture-user",
+      "password": "fixture-password",
+      "tls": true,
+      "verifyTls": true,
+      "activate": true
+    },
+    {
+      "id": "controller-onvif",
+      "type": "ONVIF",
+      "name": "Warehouse controller",
+      "ipAddress": "192.168.1.20",
+      "port": 80,
+      "username": "fixture-user",
+      "password": "fixture-password",
+      "verifyTls": false,
+      "activate": true
+    }
+  ],
+  "doors": [
+    {
+      "id": "door-hikvision-1",
+      "doorType": "HIKVISION",
+      "name": "Front Lobby",
+      "accessControllerId": "controller-hikvision",
+      "doorIndex": 1,
+      "activate": true,
+      "protocolMetadata": {}
+    },
+    {
+      "id": "door-onvif-1",
+      "doorType": "ONVIF",
+      "name": "Warehouse Entry",
+      "accessControllerId": "controller-onvif",
+      "onvifEndpoint": "http://192.168.1.20/onvif/door_control",
+      "onvifDoorToken": "door_1",
+      "onvifLockToken": "lock_1",
+      "activate": true,
+      "protocolMetadata": {
+        "supportsAccessDoor": true,
+        "supportsLockDoor": true
+      }
+    }
+  ]
+}

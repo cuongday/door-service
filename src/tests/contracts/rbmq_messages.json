@@ -1,0 +1,25 @@
+[
+  {
+    "id": "discovery-request-1",
+    "event": "discovery_door",
+    "replyQueueName": "VMS_DOOR_DISCOVERY_REPLY",
+    "data": [
+      {
+        "usernames": ["fixture-user"],
+        "passwords": ["fixture-password"],
+        "fromIp": "192.168.1.10",
+        "toIp": "192.168.1.20",
+        "ports": [80, 443],
+        "onvifPort": 80
+      }
+    ]
+  },
+  {
+    "id": "command-request-1",
+    "event": "OPEN_DOOR",
+    "replyQueueName": "AI_DOOR_REPLY",
+    "data": {
+      "doorId": "door-onvif-1"
+    }
+  }
+]

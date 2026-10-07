@@ -1,0 +1,12 @@
+services:
+  door-service:
+    image: door-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    network_mode: host
+    restart: always
+    volumes:
+      - ./logs:/app/logs
+      - ./config.json:/app/config.json:ro
+      - ./data:/app/data

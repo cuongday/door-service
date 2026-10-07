@@ -1,0 +1,9 @@
+.git
+.codebase-memory
+.superpowers
+docs
+logs
+database.db
+config.json
+*.test
+*.out

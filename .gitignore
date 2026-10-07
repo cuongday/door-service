@@ -1,0 +1,29 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test and coverage output
+*.test
+*.out
+
+# Go workspace file
+go.work
+
+# Local codebase knowledge graph
+/.codebase-memory/
+
+# Editors and local history
+.vscode/
+.history/
+*.vsix
+.ionide
+
+# Runtime data
+/logs/
+/database.db
+
+/docs/
+/postman/
